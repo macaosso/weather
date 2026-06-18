@@ -1,12 +1,11 @@
 name: Auto Log SMG Warning History
 
-# Run every 15 minutes, manual run button available
+# Run every 15 minutes + manual trigger
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
-# Give bot permission to commit log files back to repo
 permissions:
   contents: write
 
@@ -14,26 +13,39 @@ jobs:
   fetch-and-save-logs:
     runs-on: ubuntu-latest
     steps:
-      # Pull repo code
-      - name: Checkout source
+      - name: Checkout source code
         uses: actions/checkout@v4
 
-      # Install Node.js to run fetch script
-      - name: Setup Node.js v20
+      - name: Create minimal package.json (fix missing lock file warning)
+        run: |
+          cat > package.json << 'EOF'
+          {
+            "name": "smg-warning-logger",
+            "version": "1.0.0",
+            "dependencies": {
+              "fast-xml-parser": "^4.5.0",
+              "node-fetch": "^3.3.2"
+            }
+          }
+          EOF
+          npm install --package-lock-only
+
+      - name: Setup Node.js (Default Node 24 LTS, no deprecated Node 20)
         uses: actions/setup-node@v4
+        # Cache now works because package-lock.json exists
         with:
-          node-version: 20
           cache: 'npm'
 
-      # Create logging script if missing, run data fetch
-      - name: Create & Execute Warning Logger Script
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate & run warning logging script
         run: |
           cat > log-warnings.js << 'EOF'
           const fs = require('fs');
-          const fetch = require('node-fetch');
+          const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
           const parser = require('fast-xml-parser');
 
-          // SMG XML endpoints
           const endpoints = [
             { type: 'rainstorm', url: 'https://xml.smg.gov.mo/c_rainstorm.xml' },
             { type: 'typhoon', url: 'https://xml.smg.gov.mo/c_typhoon.xml' },
@@ -48,7 +60,7 @@ jobs:
             history = JSON.parse(fs.readFileSync(logFilePath, 'utf8'));
           }
 
-          async function run() {
+          async function runLogSnapshot() {
             const snapshot = {
               timestamp: new Date().toLocaleString('zh-HK', {timeZone:'Asia/Macau'}),
               utc: new Date().toISOString(),
@@ -74,23 +86,20 @@ jobs:
             }
 
             history.push(snapshot);
-            // Limit log to last 7 days (~672 entries for 15min interval)
+            // Keep last 7 days of logs (15min interval = 672 max entries)
             const maxEntries = 672;
             if(history.length > maxEntries) history = history.slice(-maxEntries);
             fs.writeFileSync(logFilePath, JSON.stringify(history, null, 2), 'utf8');
           }
-          run();
+          runLogSnapshot();
           EOF
 
-          # Install XML & fetch dependencies
-          npm install node-fetch fast-xml-parser
           node log-warnings.js
 
-      # Commit new log data back to repository
       - name: Commit updated warning history log
         run: |
           git config --global user.name "SMG-Logger-Bot"
           git config --global user.email "bot@github-actions.local"
-          git add warning-history.json
+          git add warning-history.json package.json package-lock.json
           git diff-index --quiet HEAD || git commit -m "Auto update warning log $(date +'%Y-%m-%d %H:%M') Macau Time"
           git push
