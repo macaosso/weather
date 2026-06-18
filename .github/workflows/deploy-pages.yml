@@ -1,0 +1,38 @@
+name: Deploy SMG Weather Warning Dashboard to GitHub Pages
+
+# Trigger rules
+on:
+  push:
+    branches: [ main ]
+  # Allow manual trigger from repo Actions tab
+  workflow_dispatch:
+
+# Required permissions for Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Single deployment job
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Download repository source code
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      # Step 2: Configure GitHub Pages environment
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      # Step3: Upload all static files (HTML only, no build tools needed)
+      - name: Upload static website artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./   # Upload all files in repo root
+
+      # Step4: Deploy artifact to live GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: pages-deployment
+        uses: actions/deploy-pages@v4
