@@ -1,0 +1,96 @@
+name: Auto Log SMG Warning History
+
+# Run every 15 minutes, manual run button available
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+# Give bot permission to commit log files back to repo
+permissions:
+  contents: write
+
+jobs:
+  fetch-and-save-logs:
+    runs-on: ubuntu-latest
+    steps:
+      # Pull repo code
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # Install Node.js to run fetch script
+      - name: Setup Node.js v20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # Create logging script if missing, run data fetch
+      - name: Create & Execute Warning Logger Script
+        run: |
+          cat > log-warnings.js << 'EOF'
+          const fs = require('fs');
+          const fetch = require('node-fetch');
+          const parser = require('fast-xml-parser');
+
+          // SMG XML endpoints
+          const endpoints = [
+            { type: 'rainstorm', url: 'https://xml.smg.gov.mo/c_rainstorm.xml' },
+            { type: 'typhoon', url: 'https://xml.smg.gov.mo/c_typhoon.xml' },
+            { type: 'monsoon', url: 'https://xml.smg.gov.mo/c_monsoon.xml' },
+            { type: 'thunderstorm', url: 'https://xml.smg.gov.mo/c_thunderstorm.xml' },
+            { type: 'stormsurge', url: 'https://xml.smg.gov.mo/c_stormsurge.xml' }
+          ];
+
+          const logFilePath = './warning-history.json';
+          let history = [];
+          if(fs.existsSync(logFilePath)) {
+            history = JSON.parse(fs.readFileSync(logFilePath, 'utf8'));
+          }
+
+          async function run() {
+            const snapshot = {
+              timestamp: new Date().toLocaleString('zh-HK', {timeZone:'Asia/Macau'}),
+              utc: new Date().toISOString(),
+              warnings: []
+            };
+
+            for(const ep of endpoints) {
+              try {
+                const res = await fetch(ep.url);
+                const xmlRaw = await res.text();
+                const xmlObj = parser.parse(xmlRaw);
+                const root = xmlObj.warning;
+                snapshot.warnings.push({
+                  category: ep.type,
+                  active: root.active === "1",
+                  issuedate: root.issuedate || null,
+                  issuetime: root.issuetime || null,
+                  level: root.level || null
+                });
+              } catch(err) {
+                snapshot.warnings.push({category: ep.type, error: err.message});
+              }
+            }
+
+            history.push(snapshot);
+            // Limit log to last 7 days (~672 entries for 15min interval)
+            const maxEntries = 672;
+            if(history.length > maxEntries) history = history.slice(-maxEntries);
+            fs.writeFileSync(logFilePath, JSON.stringify(history, null, 2), 'utf8');
+          }
+          run();
+          EOF
+
+          # Install XML & fetch dependencies
+          npm install node-fetch fast-xml-parser
+          node log-warnings.js
+
+      # Commit new log data back to repository
+      - name: Commit updated warning history log
+        run: |
+          git config --global user.name "SMG-Logger-Bot"
+          git config --global user.email "bot@github-actions.local"
+          git add warning-history.json
+          git diff-index --quiet HEAD || git commit -m "Auto update warning log $(date +'%Y-%m-%d %H:%M') Macau Time"
+          git push
