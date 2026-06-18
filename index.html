@@ -165,6 +165,13 @@
             stormsurge: { icon: "🌊", cls: "stormsurge", name: "風暴潮警告信號" }
         };
 
+        // CORS Proxy to bypass cross-origin restriction
+        async function fetchProxy(targetUrl) {
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+            const response = await fetch(proxyUrl);
+            return response;
+        }
+
         // Parse XML text to DOM
         function parseXML(xmlStr) {
             const parser = new DOMParser();
@@ -189,9 +196,9 @@
             return `已生效 ${m} 分鐘`;
         }
 
-        // Fetch single warning XML
+        // Fetch single warning XML via proxy
         async function fetchWarning(url) {
-            const res = await fetch(url);
+            const res = await fetchProxy(url);
             const xmlText = await res.text();
             return parseXML(xmlText);
         }
