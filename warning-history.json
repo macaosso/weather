@@ -3508,5 +3508,31 @@
         "error": "parser.parse is not a function"
       }
     ]
+  },
+  {
+    "timestamp": "2/7/2026 上午2:08:49",
+    "utc": "2026-07-01T18:08:50.450Z",
+    "warnings": [
+      {
+        "category": "rainstorm",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "typhoon",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "monsoon",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "thunderstorm",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "stormsurge",
+        "error": "parser.parse is not a function"
+      }
+    ]
   }
 ]
