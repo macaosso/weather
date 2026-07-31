@@ -14142,5 +14142,31 @@
         "error": "parser.parse is not a function"
       }
     ]
+  },
+  {
+    "timestamp": "1/8/2026 上午5:07:25",
+    "utc": "2026-07-31T21:07:26.644Z",
+    "warnings": [
+      {
+        "category": "rainstorm",
+        "error": "request to https://xml.smg.gov.mo/c_rainstorm.xml failed, reason: connect ETIMEDOUT 125.31.2.155:443"
+      },
+      {
+        "category": "typhoon",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "monsoon",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "thunderstorm",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "stormsurge",
+        "error": "parser.parse is not a function"
+      }
+    ]
   }
 ]
