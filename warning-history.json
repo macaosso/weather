@@ -1,31 +1,5 @@
 [
   {
-    "timestamp": "26/7/2026 上午2:41:54",
-    "utc": "2026-07-25T18:41:55.101Z",
-    "warnings": [
-      {
-        "category": "rainstorm",
-        "error": "request to https://xml.smg.gov.mo/c_rainstorm.xml failed, reason: connect ETIMEDOUT 125.31.4.200:443"
-      },
-      {
-        "category": "typhoon",
-        "error": "parser.parse is not a function"
-      },
-      {
-        "category": "monsoon",
-        "error": "parser.parse is not a function"
-      },
-      {
-        "category": "thunderstorm",
-        "error": "parser.parse is not a function"
-      },
-      {
-        "category": "stormsurge",
-        "error": "parser.parse is not a function"
-      }
-    ]
-  },
-  {
     "timestamp": "26/7/2026 上午3:58:58",
     "utc": "2026-07-25T19:58:58.925Z",
     "warnings": [
@@ -17448,6 +17422,32 @@
   {
     "timestamp": "23/8/2026 上午1:40:53",
     "utc": "2026-08-22T17:40:53.194Z",
+    "warnings": [
+      {
+        "category": "rainstorm",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "typhoon",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "monsoon",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "thunderstorm",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "stormsurge",
+        "error": "parser.parse is not a function"
+      }
+    ]
+  },
+  {
+    "timestamp": "23/8/2026 上午1:58:36",
+    "utc": "2026-08-22T17:58:36.831Z",
     "warnings": [
       {
         "category": "rainstorm",
