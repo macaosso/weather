@@ -1,31 +1,5 @@
 [
   {
-    "timestamp": "10/8/2026 下午12:59:17",
-    "utc": "2026-08-10T04:59:18.189Z",
-    "warnings": [
-      {
-        "category": "rainstorm",
-        "error": "parser.parse is not a function"
-      },
-      {
-        "category": "typhoon",
-        "error": "parser.parse is not a function"
-      },
-      {
-        "category": "monsoon",
-        "error": "parser.parse is not a function"
-      },
-      {
-        "category": "thunderstorm",
-        "error": "parser.parse is not a function"
-      },
-      {
-        "category": "stormsurge",
-        "error": "parser.parse is not a function"
-      }
-    ]
-  },
-  {
     "timestamp": "10/8/2026 下午2:17:15",
     "utc": "2026-08-10T06:17:15.062Z",
     "warnings": [
@@ -17448,6 +17422,32 @@
   {
     "timestamp": "11/9/2026 上午9:02:09",
     "utc": "2026-09-11T01:02:09.319Z",
+    "warnings": [
+      {
+        "category": "rainstorm",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "typhoon",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "monsoon",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "thunderstorm",
+        "error": "parser.parse is not a function"
+      },
+      {
+        "category": "stormsurge",
+        "error": "parser.parse is not a function"
+      }
+    ]
+  },
+  {
+    "timestamp": "11/9/2026 下午1:53:01",
+    "utc": "2026-09-11T05:53:01.852Z",
     "warnings": [
       {
         "category": "rainstorm",
